@@ -9,7 +9,7 @@ import { OpencvCardFindComponent } from './opencv-card-find/opencv-card-find.com
 
 // set the location of the OpenCV files
 const openCVConfig: OpenCVConfig = {
-  openCVDirPath: '/assets/opencv'  
+  openCVDirPath: './assets/opencv'  
 };
 
 @NgModule({

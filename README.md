@@ -31,7 +31,5 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 if using git bash
 `export MSYS2_ARG_CONV_EXCL=--base-href=`
-Then run `ng build --output-path docs --base-href=/fabscan/`
-
-Or
-`MSYS2_ARG_CONV_EXCL=--base-href= ng build --output-path docs --base-href="/fabscan/"`
+Then run `ng build --output-path docs --base-href=/fabscan/ --deploy-url=/fabscan/`
+ 
