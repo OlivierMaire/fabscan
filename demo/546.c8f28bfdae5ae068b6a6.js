@@ -1,0 +1,1 @@
+(()=>{"use strict";addEventListener("message",({data:e})=>{console.log(`addEventListener message ${e}`),postMessage(e)})})();
