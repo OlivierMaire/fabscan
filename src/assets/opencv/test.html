@@ -1,0 +1,70 @@
+<p id="status">opencv.js 読み込み中... まだ押せない↓</p>
+<div><input type="file" id="selectedFile" name="file" /></div>
+
+<div><img id="inputImg" src="" /></div>
+<div class="caption">1. オリジナル画像</div>
+
+<canvas id="canvas01" height="0"></canvas>
+<div class="caption">2. グレイスケール化</div>
+
+<canvas id="canvas02" height="0"></canvas>
+<div class="caption">3. 二値化</div>
+
+<canvas id="canvas03" height="0"></canvas>
+<div class="caption">4. エッジ検出</div>
+
+
+<script>
+let inputImg = document.getElementById("inputImg");
+let selectedFile = document.getElementById("selectedFile");
+
+// 関数1 opencv.jsが読み込まれた後に実行される
+function onOpenCvReady() {
+  document.getElementById("status").innerHTML = "opencv.js 読み込み終了 もう押せる↓";
+  selectedFile.addEventListener("change", uploadImage, false);
+}
+
+// 関数2　「ファイル選択」 選択された画像を読み込む
+async function uploadImage() {
+    inputImg.src = URL.createObjectURL(selectedFile.files[0]);
+}
+
+// 関数3　画像を読み込んだ後に実行される
+inputImg.onload = function() {
+  let src = cv.imread(inputImg);
+  let out1 = new cv.Mat();
+  let out2 = new cv.Mat();
+  let out3 = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
+  let lines = new cv.Mat();
+
+  // グレイスケール化
+  cv.cvtColor(src, out1, cv.COLOR_RGBA2GRAY, 0);
+  cv.imshow("canvas01", out1);
+
+  // 二値化
+  cv.threshold(out1, out2, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU);
+  cv.imshow("canvas02", out2);
+
+  // エッジ検出
+  cv.Canny(out1, out1, 150, 200);
+  cv.HoughLinesP(out1, lines, Math.PI / 180, 2, 0, 0);
+  // Hough検出した線を描く
+    for (let i = 0; i < lines.rows; ++i) {
+        let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
+        let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
+        cv.line(out3, startPoint, endPoint, new cv.Scalar(255, 255, 255));
+    }    
+  cv.imshow("canvas03", out3);
+  
+  src.delete();
+  out1.delete();
+  out2.delete();
+  lines.delete();
+
+  
+  let mat1 = cv.matFromArray(3,3,cv.CV_32FC1,[1,2,3,4,5,6,7,8,9]);
+  let s = mat1.svd();
+  console.log("sssss::" + s.u.data32F + ":::" + s.w.data32F + "::::" + s.vt.data32F);
+};
+</script>
+<script async src="./opencv.js" onload="onOpenCvReady();"></script>

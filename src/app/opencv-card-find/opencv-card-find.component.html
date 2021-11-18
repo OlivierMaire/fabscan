@@ -1,0 +1,29 @@
+<p>opencv-card-find works!</p>
+<div id="liveView" #liveView class="camView">
+    <div class="hidden">
+        <video #video id="video" width="1920" height="1080" autoplay ></video>
+        <!-- <canvas #canvasFrame id="canvasFrame" width="1920" height="1080" ></canvas> -->
+    
+    </div>
+    <div>{{cvState}}</div>
+
+    <div class="canvasbox">
+
+    <canvas #canvasInput id="canvasInput"></canvas>
+    <canvas #canvasOutput id="canvasOutput" ></canvas>
+    <canvas #canvasOutput2 id="canvasOutput2" ></canvas>
+    <canvas #canvasOutput3 id="canvasOutput3" ></canvas>
+</div>
+
+    <div>
+      </div>
+
+    <!-- <div><button id="snap" (click)="capture()">Snap Photo</button></div>
+    <div><button id="detect" (click)="processFrame()">Detect Now</button></div> -->
+    <!-- <canvas #canvas id="canvas" width="640" height="480"></canvas>
+    <ul>
+        <li *ngFor="let c of captures">
+            <img src="{{ c }}" height="50" />
+        </li>
+    </ul> -->
+</div>

@@ -1,0 +1,12 @@
+<p>card-find works!</p>
+<div id="liveView" #liveView class="camView">
+    <div><video #video id="video" width="640" height="480" autoplay (loadeddata)="loadedData()"></video></div>
+    <div><button id="snap" (click)="capture()">Snap Photo</button></div>
+    <div><button id="detect" (click)="loadedData()">Detect Now</button></div>
+    <canvas #canvas id="canvas" width="640" height="480"></canvas>
+    <ul>
+        <li *ngFor="let c of captures">
+            <img src="{{ c }}" height="50" />
+        </li>
+    </ul>
+</div>

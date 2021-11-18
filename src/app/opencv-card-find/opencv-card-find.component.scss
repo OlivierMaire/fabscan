@@ -1,0 +1,15 @@
+.hidden{
+    display: none;
+}
+
+.canvasbox{
+    display: flex;
+    flex-wrap: wrap;
+    width: 80vw;
+    
+    & > canvas{
+        // flex: 50%; /* or - flex: 0 50% - or - flex-basis: 50% - */
+        // width: 100%;
+        width: 40vw;
+    }
+}
