@@ -29,4 +29,9 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Github.io Generation
 
-Run `ng build --output-path docs --base-href //fabscan/`
+if using git bash
+`export MSYS2_ARG_CONV_EXCL=--base-href=`
+Then run `ng build --output-path docs --base-href=/fabscan/`
+
+Or
+`MSYS2_ARG_CONV_EXCL=--base-href= ng build --output-path docs --base-href="/fabscan/"`
