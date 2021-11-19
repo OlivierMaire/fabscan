@@ -43,6 +43,8 @@ export class OpencvCardFindComponent implements OnInit {
 
   cardRatio: number = 63 / 88;
 
+  approxRatio: number = 0.1;
+
   public captures: Array<any>;
 
   // public model : cocossd.ObjectDetection | null;
@@ -140,7 +142,7 @@ export class OpencvCardFindComponent implements OnInit {
     gray.delete();
     // and threshold it
     let thresh = new cv.Mat();
-    cv.threshold(blurred, thresh, 60, 255, cv.THRESH_BINARY);
+    cv.threshold(blurred, thresh, 90, 255, cv.THRESH_BINARY);
     blurred.delete();
 
     // find contours in the thresholded image and initialize the
@@ -154,7 +156,7 @@ export class OpencvCardFindComponent implements OnInit {
       cv.RETR_EXTERNAL,
       cv.CHAIN_APPROX_SIMPLE
     );
-    thresh.delete();
+    // thresh.delete();
     hierarchy.delete();
 
     // set an array to receive the detected cards
@@ -163,9 +165,12 @@ export class OpencvCardFindComponent implements OnInit {
 
     const edges = new cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3); // display pictre  // todo: remove on release
 
+
     // #region contour loop
     // loop over the contours found
     for (let i = 0; i < contours.size(); ++i) {
+      cv.drawContours(edges, contours, i,  new cv.Scalar(255, 0, 0, 255), 1);
+      cv.drawContours(thresh, contours, i,  new cv.Scalar(255, 0, 0), 1);
       let c = contours.get(i);
       // get center of countour
       let M = cv.moments(c);
@@ -264,6 +269,8 @@ export class OpencvCardFindComponent implements OnInit {
       rotPoint.y = center.location.y;
 
       // let rotPoint = new cv.Point(vertices[0].x * ratio, vertices[0].y * ratio); // top-left
+      if (rotPoint.x > 0 && rotPoint.y > 0)
+{
       cv.circle(
         edges,
         new cv.Point(rotPoint.x, rotPoint.y),
@@ -271,6 +278,8 @@ export class OpencvCardFindComponent implements OnInit {
         new cv.Scalar(255, 0, 0, 255),
         6
       );
+
+}
       // cv.circle(
       //   src,
       //   new cv.Point(rotPoint.x, rotPoint.y),
@@ -314,7 +323,6 @@ export class OpencvCardFindComponent implements OnInit {
         width,
         height
       );
-
       // debug , todo: remove on release
       if (rect.x < 0 || rect.y < 0) {
       console.log(`roi rect ${rect.x} ${rect.y} ${rect.width} ${rect.height}`);
@@ -322,11 +330,18 @@ export class OpencvCardFindComponent implements OnInit {
         continue;
       }
 
+try {
       let roiMat = srcRot.roi(rect);
+      roiArray.push(roiMat);
+
+} 
+catch (_e)
+    {
+      console.log(`roi exception ${_e}`);
+    }
 
        srcRot.delete();
       // roiArray2.push(srcRot);
-      roiArray.push(roiMat);
 
       cv.polylines(src, markersVector, true, new cv.Scalar(0, 0, 255, 255), 3);
       markersVector.delete();
@@ -367,6 +382,7 @@ export class OpencvCardFindComponent implements OnInit {
     cv.imshow(this.canvasInput.nativeElement.id, src);
     // display edges
     cv.imshow(this.canvasOutput.nativeElement.id, edges);
+    // cv.imshow(this.canvasOutput.nativeElement.id, thresh);
     // display found cards
     for (let i = 0; i < roiArray.length; i++) {
       cv.imshow(this.canvasOutput2.nativeElement.id, roiArray[i]);
@@ -378,6 +394,7 @@ export class OpencvCardFindComponent implements OnInit {
     // }
 
     // delete images
+    thresh.delete();
     edges.delete();
     lowres_src.delete();
     src.delete();
@@ -388,7 +405,7 @@ export class OpencvCardFindComponent implements OnInit {
     let shape = 'unidentified';
     let peri = cv.arcLength(c, true);
     let approx = new cv.Mat();
-    cv.approxPolyDP(c, approx, 0.04 * peri, true);
+    cv.approxPolyDP(c, approx, this.approxRatio * peri, true);
     // if the shape is a triangle, it will have 3 vertices
     if (approx.rows == 3) shape = 'triangle';
     // if the shape has 4 vertices, it is either a square or
@@ -461,7 +478,7 @@ export class OpencvCardFindComponent implements OnInit {
     // initialize the shape name and approximate the contour
     let peri = cv.arcLength(c, true);
     let approx = new cv.Mat();
-    cv.approxPolyDP(c, approx, 0.04 * peri, true);
+    cv.approxPolyDP(c, approx, this.approxRatio * peri, true);
     // if the shape has 4 vertices, it is either a square or
     // a rectangle
     if (approx.rows == 4) {
@@ -478,7 +495,7 @@ export class OpencvCardFindComponent implements OnInit {
     let shape = 'unidentified';
     let peri = cv.arcLength(c, true);
     let approx = new cv.Mat();
-    cv.approxPolyDP(c, approx, 0.04 * peri, true);
+    cv.approxPolyDP(c, approx, this.approxRatio * peri, true);
     // if the shape is a triangle, it will have 3 vertices
     if (approx.rows == 4) {
       let rotatedRect = cv.minAreaRect(approx);
